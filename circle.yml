@@ -37,5 +37,5 @@ test:
     - /opt/pwstore/bin/pwstore ; exit 0
     #- printf 'password\npassword\n' | /opt/pwstore/bin/pwstore add test1 test2
     - /opt/pwstore/bin/pwstore list ; exit 0
-    - /opt/pwstore/bin/pwstore read test1 test2
+    #- /opt/pwstore/bin/pwstore read test1 test2
 
