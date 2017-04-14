@@ -1,0 +1,41 @@
+machine:
+  timezone:
+    Europe/Berlin
+dependencies:
+  pre:
+    - sudo apt-get update
+compile:
+  override:
+    - gcc -O3 pwstore.c -D LINUX -o pwstore
+# ---- install ----
+    - sudo mkdir -p /opt/pwstore
+    - sudo chmod a+rx /opt/pwstore
+    - sudo chmod u+rwx /opt/pwstore
+    - sudo chmod og-w /opt/pwstore
+
+    - sudo mkdir -p /opt/pwstore/bin
+    - sudo chmod u+rwx /opt/pwstore/bin
+    - sudo chmod og-rw /opt/pwstore/bin
+    - sudo chmod og+x /opt/pwstore/bin
+
+    - sudo mkdir -p /opt/pwstore/conf
+    - sudo chmod u+rwx /opt/pwstore/conf
+    - sudo chmod og-rwx /opt/pwstore/conf
+
+    - sudo cp -av pwstore /opt/pwstore/bin/pwstore
+    - sudo chown root:root /opt/pwstore/bin/pwstore
+    - sudo chmod og-rw /opt/pwstore/bin/pwstore
+    - sudo chmod og+x /opt/pwstore/bin/pwstore
+    - sudo chmod u+rwx /opt/pwstore/bin/pwstore
+    - sudo chmod u+s /opt/pwstore/bin/pwstore
+
+    - sudo ls -ald /opt/pwstore
+    - sudo ls -alR /opt/pwstore
+# ---- install ----
+test:
+  override:
+    - /opt/pwstore/bin/pwstore ; exit 0
+    - printf 'password\npassword\n' | /opt/pwstore/bin/pwstore add test1 test2
+    - /opt/pwstore/bin/pwstore list ; exit 0
+    - /opt/pwstore/bin/pwstore read test1 test2
+
