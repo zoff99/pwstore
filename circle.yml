@@ -4,6 +4,7 @@ machine:
 dependencies:
   pre:
     - sudo apt-get update
+    - sudo apt-get install expect
 compile:
   override:
     - gcc -O3 pwstore.c -D LINUX -o pwstore
@@ -43,8 +44,7 @@ test:
   override:
     - /opt/pwstore/bin/pwstore ; exit 0
     - printf '#!/usr/bin/expect\nset timeout 10\nspawn "./pwstore add test1 test2"\nexpect ":" { send "password123\r" }\nexpect ":" { send "password123\r" }\n' > ~/tt.sh
-    - chmod a+rx ~/tt.sh
-    - ~/tt.sh
+    - expect ~/tt.sh
     #- printf 'password\npassword\n' | /opt/pwstore/bin/pwstore add test1 test2
     - /opt/pwstore/bin/pwstore list ; exit 0
     #- /opt/pwstore/bin/pwstore read test1 test2
