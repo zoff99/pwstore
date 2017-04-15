@@ -44,6 +44,7 @@ test:
   override:
     - /opt/pwstore/bin/pwstore ; exit 0
     - printf '#!/usr/bin/expect\nset timeout 10\nspawn "./pwstore add test1 test2"\nexpect ":" { send "password123\r" }\nexpect ":" { send "password123\r" }\n' > ~/tt.sh
+    - cat ~/tt.sh
     - expect ~/tt.sh
     #- printf 'password\npassword\n' | /opt/pwstore/bin/pwstore add test1 test2
     - /opt/pwstore/bin/pwstore list ; exit 0
