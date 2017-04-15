@@ -43,8 +43,8 @@ compile:
 test:
   override:
     - /opt/pwstore/bin/pwstore ; exit 0
-    - printf '#!/usr/bin/expect\nset timeout 10\nspawn "/opt/pwstore/bin/pwstore add test1 test2" \n send "password123\r" \n send "password123\r" \n'
-    - printf '#!/usr/bin/expect\nset timeout 10\nspawn "/opt/pwstore/bin/pwstore add test1 test2" \n send "password123\r" \n send "password123\r" \n' > ~/tt.sh
+    - printf '#!/usr/bin/expect\nset timeout 10\nspawn "/opt/pwstore/bin/pwstore add test1 test2" \n send "password123\r\r" \n send "password123\r\r" \n'
+    - printf '#!/usr/bin/expect\nset timeout 10\nspawn "/opt/pwstore/bin/pwstore add test1 test2" \n send "password123\r\r" \n send "password123\r\r" \n' > ~/tt.sh
     - cat ~/tt.sh
     - expect ~/tt.sh
     #- printf 'password\npassword\n' | /opt/pwstore/bin/pwstore add test1 test2
