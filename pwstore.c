@@ -261,11 +261,25 @@ int main(int argc, char **argv)
                                 char *password1;
                                 char *password2;
                                 char pass1[8192]; // make buffer big enough
-                                password1 = getpass("password: ");
-                                snprintf(pass1, sizeof(pass1), "%s", password1);
-                                password2 = getpass("   again: ");
 
-                                if (strcmp(pass1, password2) != 0)
+#ifdef LINUX
+				password1 = getpass("password: ");
+#else
+				password1 = getpassphrase("password: ");
+#endif
+
+
+				snprintf(pass1, sizeof(pass1), "%s", password1);
+
+
+#ifdef LINUX
+				password2 = getpass("   again: ");
+#else
+				password2 = getpassphrase("   again: ");
+#endif
+
+
+				if (strcmp(pass1, password2) != 0)
                                 {
                                         // passwords dont match
                                         puts("-ERROR-004-");
