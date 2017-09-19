@@ -43,7 +43,7 @@ compile:
 test:
   override:
     - /opt/pwstore/bin/pwstore ; exit 0
-    - printf '#!/usr/bin/expect\nset timeout -1\nspawn "/opt/pwstore/bin/pwstore" add test1 test2\nset force_conservative 0\nset send_slow {1 .1}\nexpect "password:"\nsleep .1\nsend -- "password123\\r"\nexpect "again:"\nsleep .1\nsend -- "password123\\r"\nexpect eof\n' > ~/tt.sh
+    - printf '#!/usr/bin/expect\nset timeout -1\nspawn "/opt/pwstore/bin/pwstore" add test1 test2\nset force_conservative 0\nset send_slow {1 .1}\nexpect "password:"\nsleep .1\nsend -- "password123ladfmweuiorjwiajriwjrwj\\r"\nexpect "again:"\nsleep .1\nsend -- "password123ladfmweuiorjwiajriwjrwj\\r"\nexpect eof\n' > ~/tt.sh
     - cat ~/tt.sh
     - expect ~/tt.sh
     - /opt/pwstore/bin/pwstore list ; exit 0
