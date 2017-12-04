@@ -2,6 +2,9 @@
 
 simple password mananger for unix scripts
 
+works on Solaris, AIX and Linux
+tested on Solaris and Linux
+
 ## install (via sudo)
 
 ```
