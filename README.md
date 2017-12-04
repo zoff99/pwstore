@@ -2,7 +2,7 @@
 
 simple password mananger for unix scripts
 
-## install (as via sudo)
+## install (via sudo)
 
 ```
 sudo mkdir -p /opt/pwstore
