@@ -5,9 +5,24 @@ dependencies:
   pre:
     - sudo apt-get update
     - sudo apt-get install expect
+    - sudo apt-get install astyle ; exit 0
+    - gcc --version ; exit 0
+    - astyle --version ; exit 0
 compile:
   override:
-    - gcc -O3 pwstore.c -D LINUX -o pwstore
+
+    ### ----- check code style ------
+    - cd .. ; cp -av pwstore ./astyle_check/
+    - cd ../astyle_check/ ; ls -al ./astyle/astylerc
+    - cd ../astyle_check/ ;
+      SOURCES=`ls -1 ./pwstore.c|sort`;
+      astyle -n --options=./astyle/astylerc $SOURCES ; exit 0
+    - cd ../astyle_check/ ; git --no-pager diff
+    - cd ../astyle_check/ ; git diff | cat > $CIRCLE_ARTIFACTS/astyle_check.patch 2>&1
+    - cd ../astyle_check/ ; cp -av pwstore.c $CIRCLE_ARTIFACTS/pwstore_asytle.c
+    ### ----- check code style ------
+
+    - gcc -O3 -g pwstore.c -D LINUX -o pwstore
 
 # ---- save artifacts ----
     - mkdir -p $CIRCLE_ARTIFACTS/linux
@@ -42,7 +57,11 @@ compile:
 
 test:
   override:
-    - /opt/pwstore/bin/pwstore ; exit 0
+    - /opt/pwstore/bin/pwstore
+
+    - /opt/pwstore/bin/pwstore list
+    - /opt/pwstore/bin/pwstore read test1 test2
+
     - printf '#!/usr/bin/expect\nset timeout -1\nspawn "/opt/pwstore/bin/pwstore" add test1 test2\nset force_conservative 0\nset send_slow {1 .1}\nexpect "password:"\nsleep .1\nsend -- "password123ladfmweuiorjwiajriwjrwj\\r"\nexpect "again:"\nsleep .1\nsend -- "password123ladfmweuiorjwiajriwjrwj\\r"\nexpect eof\n' > ~/tt.sh
     - cat ~/tt.sh
     - expect ~/tt.sh
