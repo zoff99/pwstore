@@ -10,6 +10,13 @@ tested on Solaris and Linux
 gcc -O3 pwstore.c -D LINUX -o pwstore
 ```
 
+## usage
+```
+/opt/pwstore/bin/pwstore list           # list all <keys> readable by current user on current system
+/opt/pwstore/bin/pwstore add key1 key2  # add password for <key1> <key2> for current user on current system
+/opt/pwstore/bin/pwstore read key1 key2 # output password for <key1> <key2> for current user on current system
+```
+
 ## install (via sudo)
 
 ```
