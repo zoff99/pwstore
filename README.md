@@ -5,6 +5,11 @@ simple password mananger for unix scripts
 works on Solaris, AIX and Linux
 tested on Solaris and Linux
 
+## compile on Linux
+```
+gcc -O3 pwstore.c -D LINUX -o pwstore
+```
+
 ## install (via sudo)
 
 ```
