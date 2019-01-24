@@ -3,14 +3,14 @@
   Name        : pwstore.c
   Author      : Zoff <zoff@zoff.cc>
   Version     :
-  Copyright   : (C) 2014 - 2018 Zoff <zoff@zoff.cc>
+  Copyright   : (C) 2014 - 2019 Zoff <zoff@zoff.cc>
   Description : simple password mananger for unix scripts
   ============================================================================
   */
 
 /**
  * pwstore
- * Copyright (C) 2014 - 2018 Zoff <zoff@zoff.cc>
+ * Copyright (C) 2014 - 2019 Zoff <zoff@zoff.cc>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -49,14 +49,16 @@
 // dirent.h
 
 #define PWSTORE_DATA_DIR "/opt/pwstore/conf/"       // hardcoded location for now, TODO: make better somehow
-#define VERSION "v0.99.7"                           // version
+#define VERSION "v0.99.8"                           // version
 
 void usage(char *s)
 {
     printf("Version: %s %s\n", s, VERSION);
-    printf("Usage  : %s list                - list all logins\n", s);
-    printf("         %s read login [login2] - get password for login\n", s);
-    printf("         %s  add login [login2] - store password for login\n", s);
+    printf("Usage  : %s   list                - list all logins\n", s);
+    printf("         %s   read login [login2] - get password for login\n", s);
+    printf("         %s    add login [login2] - store password for login\n", s);
+    printf("         %s revoke login [login2] - remove password for login\n", s);
+    printf("         %s    del login [login2] - remove password for login\n", s);
 }
 
 void log_msg(const char *action, const char *msg, const char *msg2, const char *user)
@@ -339,6 +341,42 @@ int main(int argc, char **argv)
             else
             {
                 puts("-ERROR-003-");
+                return 1;
+            }
+        }
+        else if ((strcmp("del", argv[1]) == 0) || (strcmp("revoke", argv[1]) == 0))
+        {
+            if (strlen(argv[2]) > 1)
+            {
+                char login_file[8192]; // make buffer big enough
+
+                if (argc == 4)
+                {
+                    snprintf(login_file, sizeof(login_file), "%s%s%s%s%s%s%s",
+                             pwstore_data_dir, pw->pw_name, "/", argv[2], "_", argv[3], ".txt");
+                }
+                else
+                {
+                    snprintf(login_file, sizeof(login_file), "%s%s%s%s%s",
+                             pwstore_data_dir, pw->pw_name, "/", argv[2], ".txt");
+                }
+
+                int result = unlink(login_file);
+                if (result == 0)
+                {
+                    log_msg2("REVOKE", "User revoked password for ", argv[2], argv[3], pw->pw_name);
+                    return 0;
+                }
+                else
+                {
+                    puts("-ERROR-011-");
+                    log_msg2("REVOKE", "-ERROR-011-: User revoking password for ", argv[2], argv[3], pw->pw_name);
+                    return 1;
+                }
+            }
+            else
+            {
+                puts("-ERROR-010-");
                 return 1;
             }
         }
