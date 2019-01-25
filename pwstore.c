@@ -49,7 +49,7 @@
 // dirent.h
 
 #define PWSTORE_DATA_DIR "/opt/pwstore/conf/"       // hardcoded location for now, TODO: make better somehow
-#define VERSION "v0.99.8"                           // version
+#define VERSION "v0.99.9"                           // version
 
 void usage(char *s)
 {
@@ -64,12 +64,12 @@ void usage(char *s)
 void log_msg(const char *action, const char *msg, const char *msg2, const char *user)
 {
 #ifdef LINUX
-    syslog(LOG_INFO, "user=%s action=%s %s%s", user, action, msg, msg2);
+    syslog(LOG_INFO, "version=%s user=%s action=%s %s%s", VERSION, user, action, msg, msg2);
 #else
-    syslog((LOG_AUTH | LOG_INFO), "user=%s action=%s %s%s", user, action, msg, msg2);
+    syslog((LOG_AUTH | LOG_INFO), "version=%s user=%s action=%s %s%s", VERSION, user, action, msg, msg2);
     // ----------------------------------
     // only for debugging
-    // printf("user=%s action=%s %s%s", user, action, msg, msg2);
+    // printf("version=%s user=%s action=%s %s%s", VERSION, user, action, msg, msg2);
     // only for debugging
     // ----------------------------------
 #endif
@@ -81,28 +81,28 @@ void log_msg2(const char *action, const char *msg, const char *msg2, const char 
 
     if (!msg3)
     {
-        syslog(LOG_INFO, "user=%s action=%s %s%s", user, action, msg, msg2);
+        syslog(LOG_INFO, "version=%s user=%s action=%s %s%s", VERSION, user, action, msg, msg2);
     }
     else
     {
-        syslog(LOG_INFO, "user=%s action=%s %s%s_%s", user, action, msg, msg2, msg3);
+        syslog(LOG_INFO, "version=%s user=%s action=%s %s%s_%s", VERSION, user, action, msg, msg2, msg3);
     }
 
 #else
 
     if (!msg3)
     {
-        syslog((LOG_AUTH | LOG_INFO), "user=%s action=%s %s%s", user, action, msg, msg2);
+        syslog((LOG_AUTH | LOG_INFO), "version=%s user=%s action=%s %s%s", VERSION, user, action, msg, msg2);
     }
     else
     {
-        syslog((LOG_AUTH | LOG_INFO), "user=%s action=%s %s%s_%s", user, action, msg, msg2, msg3);
+        syslog((LOG_AUTH | LOG_INFO), "version=%s user=%s action=%s %s%s_%s", VERSION, user, action, msg, msg2, msg3);
     }
 
 #endif
     // ----------------------------------
     // only for debugging
-    // printf("user=%s action=%s %s%s %s", user, action, msg, msg2, msg3);
+    // printf("version=%s user=%s action=%s %s%s %s", VERSION, user, action, msg, msg2, msg3);
     // only for debugging
     // ----------------------------------
 }
