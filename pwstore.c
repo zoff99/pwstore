@@ -362,6 +362,7 @@ int main(int argc, char **argv)
                 }
 
                 int result = unlink(login_file);
+
                 if (result == 0)
                 {
                     log_msg2("REVOKE", "User revoked password for ", argv[2], argv[3], pw->pw_name);
