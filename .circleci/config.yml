@@ -65,7 +65,8 @@ jobs:
             add_flag -Wall
             add_flag -Wextra
             add_flag -Weverything
-
+            add_flag -Werror
+            add_flag -fdiagnostics-color=always
 
             clang-11 $C_FLAGS -g -D LINUX pwstore.c -o pwstore
 # ----  compile ---
