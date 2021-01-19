@@ -40,11 +40,16 @@ jobs:
       - run: clang-11 --version
 
 
+# ----  compile ---
       - run: clang-11 -O3 -g -Wall -Wextra -pedantic
             -Wvla
             -Werror=div-by-zero
             -D LINUX
             pwstore.c -o pwstore
+# ----  compile ---
+
+      - run: ldd pwstore
+      - run: ls -hal pwstore
 
 # ---- install ----
       - run: sudo mkdir -p /opt/pwstore
@@ -72,6 +77,18 @@ jobs:
       - run: sudo ls -alR /opt/pwstore
 # ---- install ----
 
+# ----   test  ----
+      - run: /opt/pwstore/bin/pwstore
+
+      - run: /opt/pwstore/bin/pwstore list
+      - run: /opt/pwstore/bin/pwstore read test1 test2 ; exit 0 # expect an error here, but not a crash!
+
+      - run: printf '#!/usr/bin/expect\nset timeout -1\nspawn "/opt/pwstore/bin/pwstore" add test1 test2\nset force_conservative 0\nset send_slow {1 .1}\nexpect "password:"\nsleep .1\nsend -- "password123ladfmweuiorjwiajriwjrwj\\r"\nexpect "again:"\nsleep .1\nsend -- "password123ladfmweuiorjwiajriwjrwj\\r"\nexpect eof\n' > ~/tt.sh
+      - run: cat ~/tt.sh
+      - run: expect ~/tt.sh
+      - run: /opt/pwstore/bin/pwstore list
+      - run: /opt/pwstore/bin/pwstore read test1 test2
+# ----   test  ----
 
       - store_artifacts:
           path: ~/work/pwstore
