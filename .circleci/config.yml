@@ -41,12 +41,7 @@ jobs:
 
 
 # ----  compile ---
-      - run: add_config_flag() { CONFIG_FLAGS="$CONFIG_FLAGS $@";    }
-            add_c_flag()      { C_FLAGS="$C_FLAGS $@";              }
-            add_cxx_flag()    { CXX_FLAGS="$CXX_FLAGS $@";          }
-            add_ld_flag()     { LD_FLAGS="$LD_FLAGS $@";            }
-            add_flag()        { add_c_flag "$@"; add_cxx_flag "$@"; }
-            unset CONFIG_FLAGS
+      - run: unset CONFIG_FLAGS
             unset C_FLAGS
             unset CXX_FLAGS
             unset LD_FLAGS
