@@ -41,98 +41,99 @@ jobs:
 
 
 # ----  compile ---
-      - run: unset CONFIG_FLAGS
-            unset C_FLAGS
-            unset CXX_FLAGS
-            unset LD_FLAGS
-            unset CFLAGS
-            unset CXXFLAGS
-            unset CPPFLAGS
-            unset LDFLAGS
-            # Optimisation flags.
-            add_flag -O2 -march=native
-            # Warn on non-ISO C.
-            add_c_flag -pedantic
-            add_c_flag -std=c99
-            add_flag -g3
-            add_flag -ftrapv
-            # Add all warning flags we can.
-            add_flag -Wall
-            add_flag -Wextra
-            add_flag -Weverything
-            # Disable specific warning flags for both C and C++.
-            # TODO: Clean these up. Probably all of these are actual bugs.
-            add_flag -Wno-cast-align
-            # Very verbose, not very useful. This warns about things like int -> uint
-            # conversions that change sign without a cast and narrowing conversions.
-            add_flag -Wno-conversion
-            # TODO: Check enum values when received from the user, then assume
-            # correctness and remove this suppression.
-            add_flag -Wno-covered-switch-default
-            # Due to clang's tolower() macro being recursive
-            # https://github.com/TokTok/c-toxcore/pull/481
-            add_flag -Wno-disabled-macro-expansion
-            # We don't put __attribute__ on the public API.
-            add_flag -Wno-documentation-deprecated-sync
-            # Bootstrap daemon does this.
-            add_flag -Wno-format-nonliteral
-            # struct Foo foo = {0}; is a common idiom.
-            add_flag -Wno-missing-field-initializers
-            # Useful sometimes, but we accept padding in structs for clarity.
-            # Reordering fields to avoid padding will reduce readability.
-            add_flag -Wno-padded
-            # This warns on things like _XOPEN_SOURCE, which we currently need (we
-            # probably won't need these in the future).
-            add_flag -Wno-reserved-id-macro
-            # TODO: Clean these up. They are likely not bugs, but still
-            # potential issues and probably confusing.
-            add_flag -Wno-sign-compare
-            # Our use of mutexes results in a false positive, see 1bbe446.
-            add_flag -Wno-thread-safety-analysis
-            # File transfer code has this.
-            add_flag -Wno-type-limits
-            # Callbacks often don't use all their parameters.
-            add_flag -Wno-unused-parameter
-            # libvpx uses __attribute__((unused)) for "potentially unused" static
-            # functions to avoid unused static function warnings.
-            add_flag -Wno-used-but-marked-unused
-            # Disable specific warning flags for C++.
-            # Downgrade to warning so we still see it.
-            # add_flag -Wno-error=documentation-unknown-command
-            add_flag -Wno-documentation-unknown-command
-            # add_flag -Wno-error=double-promotion
-            add_flag -Wno-double-promotion
-            # add_flag -Wno-error=missing-variable-declarations
-            add_flag -Wno-missing-variable-declarations
-            # add_flag -Wno-error=missing-prototypes
-            add_flag -Wno-missing-prototypes
-            add_flag -Wno-error=incompatible-pointer-types-discards-qualifiers
-            add_flag -Wno-error=deprecated-declarations
-            # add_flag -Wno-error=unused-macros
-            add_flag -Wno-unused-macros
-            #add_flag -Wno-error=bad-function-cast
-            add_flag -Wno-bad-function-cast
-            #add_flag -Wno-error=float-equal
-            add_flag -Wno-float-equal
-            #add_flag -Wno-error=cast-qual
-            add_flag -Wno-cast-qual
-            #add_flag -Wno-error=strict-prototypes
-            add_flag -Wno-strict-prototypes
-            #add_flag -Wno-error=gnu-statement-expression
-            add_flag -Wno-gnu-statement-expression
-            #add_flag -Wno-error=documentation
-            add_flag -Wno-documentation
-            # reactivate this later! ------------
-            # add_flag -Wno-error=pointer-sign
-            add_flag -Wno-pointer-sign
-            # add_flag -Wno-error=extra-semi-stmt
-            # add_flag -Wno-error=undef
-            # reactivate this later! ------------
-            add_flag -Werror
-            add_flag -fdiagnostics-color=always
-            clang-11 $C_FLAGS -g
-            -D LINUX
-            pwstore.c -o pwstore
+      -  run:
+        command: |
+         echo compile
+         unset CONFIG_FLAGS
+         unset C_FLAGS
+         unset CXX_FLAGS
+         unset LD_FLAGS
+         unset CFLAGS
+         unset CXXFLAGS
+         unset CPPFLAGS
+         unset LDFLAGS
+         # Optimisation flags.
+         add_flag -O2 -march=native
+         # Warn on non-ISO C.
+         add_c_flag -pedantic
+         add_c_flag -std=c99
+         add_flag -g3
+         add_flag -ftrapv
+         # Add all warning flags we can.
+         add_flag -Wall
+         add_flag -Wextra
+         add_flag -Weverything
+         # Disable specific warning flags for both C and C++.
+         # TODO: Clean these up. Probably all of these are actual bugs.
+         add_flag -Wno-cast-align
+         # Very verbose, not very useful. This warns about things like int -> uint
+         # conversions that change sign without a cast and narrowing conversions.
+         add_flag -Wno-conversion
+         # TODO: Check enum values when received from the user, then assume
+         # correctness and remove this suppression.
+         add_flag -Wno-covered-switch-default
+         # Due to clang's tolower() macro being recursive
+         # https://github.com/TokTok/c-toxcore/pull/481
+         add_flag -Wno-disabled-macro-expansion
+         # We don't put __attribute__ on the public API.
+         add_flag -Wno-documentation-deprecated-sync
+         # Bootstrap daemon does this.
+         add_flag -Wno-format-nonliteral
+         # struct Foo foo = {0}; is a common idiom.
+         add_flag -Wno-missing-field-initializers
+         # Useful sometimes, but we accept padding in structs for clarity.
+         # Reordering fields to avoid padding will reduce readability.
+         add_flag -Wno-padded
+         # This warns on things like _XOPEN_SOURCE, which we currently need (we
+         # probably won't need these in the future).
+         add_flag -Wno-reserved-id-macro
+         # TODO: Clean these up. They are likely not bugs, but still
+         # potential issues and probably confusing.
+         add_flag -Wno-sign-compare
+         # Our use of mutexes results in a false positive, see 1bbe446.
+         add_flag -Wno-thread-safety-analysis
+         # File transfer code has this.
+         add_flag -Wno-type-limits
+         # Callbacks often don't use all their parameters.
+         add_flag -Wno-unused-parameter
+         # libvpx uses __attribute__((unused)) for "potentially unused" static
+         # functions to avoid unused static function warnings.
+         add_flag -Wno-used-but-marked-unused
+         # Disable specific warning flags for C++.
+         # Downgrade to warning so we still see it.
+         # add_flag -Wno-error=documentation-unknown-command
+         add_flag -Wno-documentation-unknown-command
+         # add_flag -Wno-error=double-promotion
+         add_flag -Wno-double-promotion
+         # add_flag -Wno-error=missing-variable-declarations
+         add_flag -Wno-missing-variable-declarations
+         # add_flag -Wno-error=missing-prototypes
+         add_flag -Wno-missing-prototypes
+         add_flag -Wno-error=incompatible-pointer-types-discards-qualifiers
+         add_flag -Wno-error=deprecated-declarations
+         # add_flag -Wno-error=unused-macros
+         add_flag -Wno-unused-macros
+         #add_flag -Wno-error=bad-function-cast
+         add_flag -Wno-bad-function-cast
+         #add_flag -Wno-error=float-equal
+         add_flag -Wno-float-equal
+         #add_flag -Wno-error=cast-qual
+         add_flag -Wno-cast-qual
+         #add_flag -Wno-error=strict-prototypes
+         add_flag -Wno-strict-prototypes
+         #add_flag -Wno-error=gnu-statement-expression
+         add_flag -Wno-gnu-statement-expression
+         #add_flag -Wno-error=documentation
+         add_flag -Wno-documentation
+         # reactivate this later! ------------
+         # add_flag -Wno-error=pointer-sign
+         add_flag -Wno-pointer-sign
+         # add_flag -Wno-error=extra-semi-stmt
+         # add_flag -Wno-error=undef
+         # reactivate this later! ------------
+        add_flag -Werror
+        add_flag -fdiagnostics-color=always
+        clang-11 $C_FLAGS -g -D LINUX pwstore.c -o pwstore
 # ----  compile ---
 
       - run: ldd pwstore
