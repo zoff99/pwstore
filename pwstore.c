@@ -32,12 +32,16 @@
      gcc -O3 -g -Wall -Wextra -pedantic \
        -Wvla \
        -Werror=div-by-zero \
+       -fno-omit-frame-pointer \
+       -fsanitize=address \
        -D LINUX pwstore.c -o pwstore
 
    to compile static on linux:
      gcc -static -O3 -g -Wall -Wextra -pedantic \
        -Wvla \
        -Werror=div-by-zero \
+       -fno-omit-frame-pointer \
+       -fsanitize=address \
        -D LINUX pwstore.c -o pwstore
 
  */
