@@ -67,6 +67,8 @@ jobs:
             add_flag -Weverything
             add_flag -Werror
             add_flag -fdiagnostics-color=always
+            add_flag -fno-omit-frame-pointer
+            add_flag -fsanitize=address
 
             clang-11 $C_FLAGS -g -D LINUX pwstore.c -o pwstore
 # ----  compile ---
