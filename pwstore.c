@@ -3,14 +3,14 @@
   Name        : pwstore.c
   Author      : Zoff <zoff@zoff.cc>
   Version     :
-  Copyright   : (C) 2014 - 2019 Zoff <zoff@zoff.cc>
+  Copyright   : (C) 2014 - 2021 Zoff <zoff@zoff.cc>
   Description : simple password mananger for unix scripts
   ============================================================================
   */
 
 /**
  * pwstore
- * Copyright (C) 2014 - 2019 Zoff <zoff@zoff.cc>
+ * Copyright (C) 2014 - 2021 Zoff <zoff@zoff.cc>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,13 +28,19 @@
  */
 
 /*
-  * to compile dynamic (normal) on linux:
-  *   gcc -O3 pwstore.c -D LINUX -o pwstore
-  *
-  * to compile static on linux:
-  *   gcc -static -O3 -D LINUX pwstore.c -o pwstore
-  *
-  */
+   to compile dynamic (normal) on linux:
+     gcc -O3 -g -Wall -Wextra -pedantic \
+       -Wvla \
+       -Werror=div-by-zero \
+       -D LINUX pwstore.c -o pwstore
+
+   to compile static on linux:
+     gcc -static -O3 -g -Wall -Wextra -pedantic \
+       -Wvla \
+       -Werror=div-by-zero \
+       -D LINUX pwstore.c -o pwstore
+
+ */
 
 #include <pwd.h>
 #include <stdlib.h>
@@ -50,6 +56,8 @@
 
 #define PWSTORE_DATA_DIR "/opt/pwstore/conf/"       // hardcoded location for now, TODO: make better somehow
 #define VERSION "v0.99.9"                           // version
+
+#define TEXT_BUFFER_LEN 8192
 
 void usage(char *s)
 {
@@ -113,7 +121,8 @@ int main(int argc, char **argv)
     mode_t data_dir_mode = (S_IRUSR | S_IWUSR | S_IXUSR);
     mode_t data_file_mask = (S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IROTH | S_IXOTH);
     int create_user_data_dir = 0;
-    char login_dir[8192]; // make buffer big enough
+    char login_dir[TEXT_BUFFER_LEN + 1]; // make buffer big enough
+    memset(login_dir, 0, TEXT_BUFFER_LEN);
 
     if (argc == 1)
     {
@@ -160,7 +169,8 @@ int main(int argc, char **argv)
         {
             DIR *d;
             struct dirent *dir;
-            char data_dir_for_user[8192]; // make buffer big enough
+            char data_dir_for_user[TEXT_BUFFER_LEN + 1]; // make buffer big enough
+            memset(data_dir_for_user, 0, TEXT_BUFFER_LEN);
             snprintf(data_dir_for_user, sizeof(data_dir_for_user), "%s%s%s", pwstore_data_dir, pw->pw_name, "/");
             d = opendir(data_dir_for_user);
 
@@ -174,7 +184,8 @@ int main(int argc, char **argv)
                         {
                             if (strlen(dir->d_name) > 4)
                             {
-                                char dir_entry[8192]; // make buffer big enough
+                                char dir_entry[TEXT_BUFFER_LEN + 1]; // make buffer big enough
+                                memset(dir_entry, 0, TEXT_BUFFER_LEN);
                                 snprintf(dir_entry, sizeof(dir_entry), "%s", dir->d_name);
                                 // remove ".txt" from the filename
                                 int len = strlen(dir_entry);
@@ -201,7 +212,8 @@ int main(int argc, char **argv)
     {
         if (strcmp("read", argv[1]) == 0)
         {
-            char login_file[8192]; // make buffer big enough
+            char login_file[TEXT_BUFFER_LEN + 1]; // make buffer big enough
+            memset(login_file, 0, TEXT_BUFFER_LEN);
 
             if (argc == 4)
             {
@@ -226,12 +238,14 @@ int main(int argc, char **argv)
             else
             {
                 // read password
-                char password[8192]; // make buffer big enough
+                char password[TEXT_BUFFER_LEN + 1]; // make buffer big enough
+                memset(password, 0, TEXT_BUFFER_LEN);
                 char *ret2 = fgets(password, 8192, file);
 
                 if (ret2 == NULL)
                 {
                     int ret = fclose(file);
+                    if (ret){}
                     puts("-ERROR-009-");
                     log_msg2("READ", "-ERROR-009-: User trying to read password for ", argv[2], argv[3], pw->pw_name);
                     return 1;
@@ -258,7 +272,8 @@ int main(int argc, char **argv)
         {
             if (strlen(argv[2]) > 1)
             {
-                char login_file[8192]; // make buffer big enough
+                char login_file[TEXT_BUFFER_LEN + 1]; // make buffer big enough
+                memset(login_file, 0, TEXT_BUFFER_LEN);
 
                 if (argc == 4)
                 {
@@ -273,7 +288,8 @@ int main(int argc, char **argv)
 
                 char *password1;
                 char *password2;
-                char pass1[8192]; // make buffer big enough
+                char pass1[TEXT_BUFFER_LEN + 1]; // make buffer big enough
+                memset(pass1, 0, TEXT_BUFFER_LEN);
 #ifdef LINUX
                 password1 = getpass("password: ");
 #else
@@ -348,7 +364,8 @@ int main(int argc, char **argv)
         {
             if (strlen(argv[2]) > 1)
             {
-                char login_file[8192]; // make buffer big enough
+                char login_file[TEXT_BUFFER_LEN + 1]; // make buffer big enough
+                memset(login_file, 0, TEXT_BUFFER_LEN);
 
                 if (argc == 4)
                 {
