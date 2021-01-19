@@ -42,6 +42,15 @@ jobs:
 # ----  compile ---
       -  run:
           command: |
+            unset CONFIG_FLAGS
+            unset C_FLAGS
+            unset CXX_FLAGS
+            unset LD_FLAGS
+            unset CFLAGS
+            unset CXXFLAGS
+            unset CPPFLAGS
+            unset LDFLAGS
+            
             clang-11 $C_FLAGS -g -D LINUX pwstore.c -o pwstore
 # ----  compile ---
 
