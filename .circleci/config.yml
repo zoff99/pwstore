@@ -55,7 +55,18 @@ jobs:
             unset CXXFLAGS
             unset CPPFLAGS
             unset LDFLAGS
-            
+
+            add_flag -O2 -march=native
+            add_c_flag -pedantic
+            add_c_flag -std=c99
+            add_flag -g3
+            add_flag -ftrapv
+            # Add all warning flags we can.
+            add_flag -Wall
+            add_flag -Wextra
+            add_flag -Weverything
+
+
             clang-11 $C_FLAGS -g -D LINUX pwstore.c -o pwstore
 # ----  compile ---
 
