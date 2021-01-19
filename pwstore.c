@@ -58,6 +58,7 @@
 #define VERSION "v0.99.9"                           // version
 
 #define TEXT_BUFFER_LEN 8192
+#define REPLACE_CHAR (char)(95) // "_"
 
 void usage(char *s)
 {
@@ -113,6 +114,26 @@ void log_msg2(const char *action, const char *msg, const char *msg2, const char 
     // printf("version=%s user=%s action=%s %s%s %s", VERSION, user, action, msg, msg2, msg3);
     // only for debugging
     // ----------------------------------
+}
+
+void replace_bad_char_from_string(char *str, const char replace_with)
+{
+    // replace those: '\ / : * ? " < > | .'
+    char bad_chars[] = "\\./:*?<>|\"";
+    int i;
+    int j;
+
+    if ((str) && (strlen(str) > 0))
+    {
+        for (i = 0; (int)i < (int)strlen(str) ; i++)
+        {
+            for (j = 0; (int)j < (int)strlen(bad_chars); j++)
+                if (str[i] == bad_chars[j])
+                {
+                    str[i] = replace_with;
+                }
+        }
+    }
 }
 
 int main(int argc, char **argv)
@@ -212,11 +233,14 @@ int main(int argc, char **argv)
     {
         if (strcmp("read", argv[1]) == 0)
         {
+            replace_bad_char_from_string(argv[2], REPLACE_CHAR);
+
             char login_file[TEXT_BUFFER_LEN + 1]; // make buffer big enough
             memset(login_file, 0, TEXT_BUFFER_LEN);
 
             if (argc == 4)
             {
+                replace_bad_char_from_string(argv[3], REPLACE_CHAR);
                 snprintf(login_file, sizeof(login_file), "%s%s%s%s%s%s%s",
                          pwstore_data_dir, pw->pw_name, "/", argv[2], "_", argv[3], ".txt");
             }
@@ -272,11 +296,14 @@ int main(int argc, char **argv)
         {
             if (strlen(argv[2]) > 1)
             {
+                replace_bad_char_from_string(argv[2], REPLACE_CHAR);
+
                 char login_file[TEXT_BUFFER_LEN + 1]; // make buffer big enough
                 memset(login_file, 0, TEXT_BUFFER_LEN);
 
                 if (argc == 4)
                 {
+                    replace_bad_char_from_string(argv[3], REPLACE_CHAR);
                     snprintf(login_file, sizeof(login_file), "%s%s%s%s%s%s%s",
                              pwstore_data_dir, pw->pw_name, "/", argv[2], "_", argv[3], ".txt");
                 }
@@ -364,11 +391,14 @@ int main(int argc, char **argv)
         {
             if (strlen(argv[2]) > 1)
             {
+                replace_bad_char_from_string(argv[2], REPLACE_CHAR);
+
                 char login_file[TEXT_BUFFER_LEN + 1]; // make buffer big enough
                 memset(login_file, 0, TEXT_BUFFER_LEN);
 
                 if (argc == 4)
                 {
+                    replace_bad_char_from_string(argv[3], REPLACE_CHAR);
                     snprintf(login_file, sizeof(login_file), "%s%s%s%s%s%s%s",
                              pwstore_data_dir, pw->pw_name, "/", argv[2], "_", argv[3], ".txt");
                 }
