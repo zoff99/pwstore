@@ -58,7 +58,7 @@ jobs:
 
             add_flag -O2 -march=native
             add_c_flag -pedantic
-            add_c_flag -std=c99
+            # add_c_flag -std=c99
             add_flag -g3
             add_flag -ftrapv
             # Add all warning flags we can.
