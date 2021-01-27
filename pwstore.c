@@ -59,7 +59,7 @@
 // dirent.h
 
 #define PWSTORE_DATA_DIR "/opt/pwstore/conf/"       // hardcoded location for now, TODO: make better somehow
-#define VERSION "v0.99.9"                           // version
+#define VERSION "v0.99.10"                          // version
 
 #define TEXT_BUFFER_LEN 8192
 #define REPLACE_CHAR (char)(95) // "_"
