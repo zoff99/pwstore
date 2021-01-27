@@ -64,7 +64,7 @@
 #define TEXT_BUFFER_LEN 8192
 #define REPLACE_CHAR (char)(95) // "_"
 
-void usage(char *s)
+static void usage(char *s)
 {
     printf("Version: %s %s\n", s, VERSION);
     printf("Usage  : %s   list                - list all logins\n", s);
@@ -74,7 +74,7 @@ void usage(char *s)
     printf("         %s    del login [login2] - remove password for login\n", s);
 }
 
-void log_msg(const char *action, const char *msg, const char *msg2, const char *user)
+static void log_msg(const char *action, const char *msg, const char *msg2, const char *user)
 {
 #ifdef LINUX
     syslog(LOG_INFO, "version=%s user=%s action=%s %s%s", VERSION, user, action, msg, msg2);
@@ -88,7 +88,7 @@ void log_msg(const char *action, const char *msg, const char *msg2, const char *
 #endif
 }
 
-void log_msg2(const char *action, const char *msg, const char *msg2, const char *msg3, const char *user)
+static void log_msg2(const char *action, const char *msg, const char *msg2, const char *msg3, const char *user)
 {
 #ifdef LINUX
 
@@ -120,7 +120,7 @@ void log_msg2(const char *action, const char *msg, const char *msg2, const char 
     // ----------------------------------
 }
 
-void replace_bad_char_from_string(char *str, const char replace_with)
+static void replace_bad_char_from_string(char *str, const char replace_with)
 {
     // replace those: '\ / : * ? " < > | .'
     char bad_chars[] = "\\./:*?<>|\"";
@@ -213,7 +213,7 @@ int main(int argc, char **argv)
                                 memset(dir_entry, 0, TEXT_BUFFER_LEN);
                                 snprintf(dir_entry, sizeof(dir_entry), "%s", dir->d_name);
                                 // remove ".txt" from the filename
-                                int len = strlen(dir_entry);
+                                int len = (int)(strlen(dir_entry));
                                 dir_entry[len - 4] = '\0';
                                 // list all logins
                                 printf("%s\n", dir_entry);
