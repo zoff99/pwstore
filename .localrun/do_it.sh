@@ -37,6 +37,8 @@ cd $_HOME_
             add_flag -fdiagnostics-color=always
             add_flag -fno-omit-frame-pointer
             add_flag -fsanitize=address
+            add_flag -fstack-protector-all
+            add_flag --param=ssp-buffer-size=1
 
             clang-10 $C_FLAGS -g -D LINUX ../pwstore.c -o ../pwstore
 
