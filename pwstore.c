@@ -33,7 +33,7 @@
        -Wvla \
        -Werror=div-by-zero \
        -fno-omit-frame-pointer \
-       -fsanitize=address \
+       -fstack-protector-all --param=ssp-buffer-size=1 \
        -D LINUX pwstore.c -o pwstore
 
    to compile static on linux:
@@ -41,7 +41,7 @@
        -Wvla \
        -Werror=div-by-zero \
        -fno-omit-frame-pointer \
-       -fsanitize=address \
+       -fstack-protector-all --param=ssp-buffer-size=1 \
        -D LINUX pwstore.c -o pwstore
 
  */
