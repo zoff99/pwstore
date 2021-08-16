@@ -147,7 +147,7 @@ int main(int argc, char **argv)
     mode_t data_file_mask = (S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IROTH | S_IXOTH);
     int create_user_data_dir = 0;
     char login_dir[TEXT_BUFFER_LEN + 1]; // make buffer big enough
-    memset(login_dir, 0, TEXT_BUFFER_LEN);
+    memset(login_dir, 0, TEXT_BUFFER_LEN + 1);
 
     if (argc == 1)
     {
@@ -195,7 +195,7 @@ int main(int argc, char **argv)
             DIR *d;
             struct dirent *dir;
             char data_dir_for_user[TEXT_BUFFER_LEN + 1]; // make buffer big enough
-            memset(data_dir_for_user, 0, TEXT_BUFFER_LEN);
+            memset(data_dir_for_user, 0, TEXT_BUFFER_LEN + 1);
             snprintf(data_dir_for_user, sizeof(data_dir_for_user), "%s%s%s", pwstore_data_dir, pw->pw_name, "/");
             d = opendir(data_dir_for_user);
 
@@ -210,7 +210,7 @@ int main(int argc, char **argv)
                             if (strlen(dir->d_name) > 4)
                             {
                                 char dir_entry[TEXT_BUFFER_LEN + 1]; // make buffer big enough
-                                memset(dir_entry, 0, TEXT_BUFFER_LEN);
+                                memset(dir_entry, 0, TEXT_BUFFER_LEN + 1);
                                 snprintf(dir_entry, sizeof(dir_entry), "%s", dir->d_name);
                                 // remove ".txt" from the filename
                                 int len = (int)(strlen(dir_entry));
@@ -240,7 +240,7 @@ int main(int argc, char **argv)
             replace_bad_char_from_string(argv[2], REPLACE_CHAR);
 
             char login_file[TEXT_BUFFER_LEN + 1]; // make buffer big enough
-            memset(login_file, 0, TEXT_BUFFER_LEN);
+            memset(login_file, 0, TEXT_BUFFER_LEN + 1);
 
             if (argc == 4)
             {
@@ -267,7 +267,7 @@ int main(int argc, char **argv)
             {
                 // read password
                 char password[TEXT_BUFFER_LEN + 1]; // make buffer big enough
-                memset(password, 0, TEXT_BUFFER_LEN);
+                memset(password, 0, TEXT_BUFFER_LEN + 1);
                 char *ret2 = fgets(password, 8192, file);
 
                 if (ret2 == NULL)
@@ -303,7 +303,7 @@ int main(int argc, char **argv)
                 replace_bad_char_from_string(argv[2], REPLACE_CHAR);
 
                 char login_file[TEXT_BUFFER_LEN + 1]; // make buffer big enough
-                memset(login_file, 0, TEXT_BUFFER_LEN);
+                memset(login_file, 0, TEXT_BUFFER_LEN + 1);
 
                 if (argc == 4)
                 {
@@ -320,7 +320,7 @@ int main(int argc, char **argv)
                 char *password1;
                 char *password2;
                 char pass1[TEXT_BUFFER_LEN + 1]; // make buffer big enough
-                memset(pass1, 0, TEXT_BUFFER_LEN);
+                memset(pass1, 0, TEXT_BUFFER_LEN + 1);
 #ifdef LINUX
                 password1 = getpass("password: ");
 #else
@@ -398,7 +398,7 @@ int main(int argc, char **argv)
                 replace_bad_char_from_string(argv[2], REPLACE_CHAR);
 
                 char login_file[TEXT_BUFFER_LEN + 1]; // make buffer big enough
-                memset(login_file, 0, TEXT_BUFFER_LEN);
+                memset(login_file, 0, TEXT_BUFFER_LEN + 1);
 
                 if (argc == 4)
                 {
