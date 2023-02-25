@@ -28,6 +28,7 @@ jobs:
           -fno-omit-frame-pointer -fsanitize=address \
           -D LINUX \
           pwstore.c -o pwstore
+          ls -al pwstore
       - name: install
         run: |
             ldd pwstore
@@ -50,15 +51,30 @@ jobs:
             sudo chmod u+s /opt/pwstore/bin/pwstore
             sudo ls -ald /opt/pwstore
             sudo ls -alR /opt/pwstore
+            echo "install done."
 
-      - name: test
+      - name: test_1
         run: |
             /opt/pwstore/bin/pwstore
+      - name: test_2
+        run: |
             /opt/pwstore/bin/pwstore list
+      - name: test_3
+        run: |
             /opt/pwstore/bin/pwstore read test1 test2 || exit 0 # expect an error here, but not a crash!
+      - name: test_4
+        run: |
             printf '#!/usr/bin/expect\nset timeout -1\nspawn "/opt/pwstore/bin/pwstore" add test1 test2\nset force_conservative 0\nset send_slow {1 .1}\nexpect "password:"\nsleep .1\nsend -- "password123ladfmweuiorjwiajriwjrwj\\r"\nexpect "again:"\nsleep .1\nsend -- "password123ladfmweuiorjwiajriwjrwj\\r"\nexpect eof\n' > ~/tt.sh
+      - name: test_5
+        run: |
             cat ~/tt.sh
+      - name: test_6
+        run: |
             expect ~/tt.sh
+      - name: test_7
+        run: |
             /opt/pwstore/bin/pwstore list
+      - name: test_8
+        run: |
             /opt/pwstore/bin/pwstore read test1 test2
 
