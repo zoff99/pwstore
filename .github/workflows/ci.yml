@@ -15,10 +15,12 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive \
           apt-get install -y --no-install-recommends \
           clang \
-          libasan4 \
+          libasan5 \
           cmake \
           expect \
           sudo
+      - name: clang_version
+        run: clang --version
       - name: compile
         run: |
           id -a;pwd
