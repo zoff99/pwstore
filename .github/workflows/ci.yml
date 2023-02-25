@@ -1,0 +1,63 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  linux-ublatest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          sudo apt-get update && \
+          sudo DEBIAN_FRONTEND=noninteractive apt-get remove g++ && \
+          sudo DEBIAN_FRONTEND=noninteractive \
+          apt-get install -y --no-install-recommends \
+          clang \
+          cmake \
+          expect \
+          sudo
+      - name: compile
+        run: |
+          id -a;pwd
+          gcc -O3 -g \
+          -Wall -Wextra -pedantic \
+          -Wvla -Werror=div-by-zero -fno-omit-frame-pointer -fstack-protector-all --param=ssp-buffer-size=1 \
+          -fno-omit-frame-pointer -fsanitize=address \
+          -D LINUX \
+          pwstore.c -o pwstore
+      - name: install
+        run: |
+            ldd pwstore
+            sudo mkdir -p /opt/pwstore
+            sudo chmod a+rx /opt/pwstore
+            sudo chmod u+rwx /opt/pwstore
+            sudo chmod og-w /opt/pwstore
+            sudo mkdir -p /opt/pwstore/bin
+            sudo chmod u+rwx /opt/pwstore/bin
+            sudo chmod og-rw /opt/pwstore/bin
+            sudo chmod og+x /opt/pwstore/bin
+            sudo mkdir -p /opt/pwstore/conf
+            sudo chmod u+rwx /opt/pwstore/conf
+            sudo chmod og-rwx /opt/pwstore/conf
+            sudo cp -av pwstore /opt/pwstore/bin/pwstore
+            sudo chown root:root /opt/pwstore/bin/pwstore
+            sudo chmod og-rw /opt/pwstore/bin/pwstore
+            sudo chmod og+x /opt/pwstore/bin/pwstore
+            sudo chmod u+rwx /opt/pwstore/bin/pwstore
+            sudo chmod u+s /opt/pwstore/bin/pwstore
+            sudo ls -ald /opt/pwstore
+            sudo ls -alR /opt/pwstore
+
+      - name: test
+        run: |
+            /opt/pwstore/bin/pwstore
+            /opt/pwstore/bin/pwstore list
+            /opt/pwstore/bin/pwstore read test1 test2 || exit 0 # expect an error here, but not a crash!
+            printf '#!/usr/bin/expect\nset timeout -1\nspawn "/opt/pwstore/bin/pwstore" add test1 test2\nset force_conservative 0\nset send_slow {1 .1}\nexpect "password:"\nsleep .1\nsend -- "password123ladfmweuiorjwiajriwjrwj\\r"\nexpect "again:"\nsleep .1\nsend -- "password123ladfmweuiorjwiajriwjrwj\\r"\nexpect eof\n' > ~/tt.sh
+            cat ~/tt.sh
+            expect ~/tt.sh
+            /opt/pwstore/bin/pwstore list
+            /opt/pwstore/bin/pwstore read test1 test2
+
