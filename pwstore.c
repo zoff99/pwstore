@@ -142,7 +142,7 @@ static void replace_bad_char_from_string(char *str, const char replace_with)
 }
 #pragma clang diagnostic pop
 
-void func_list(const char *pwstore_data_dir, const struct passwd *pw)
+static void func_list(const char *pwstore_data_dir, const struct passwd *pw)
 {
     DIR *d;
     const struct dirent *dir;
@@ -177,7 +177,7 @@ void func_list(const char *pwstore_data_dir, const struct passwd *pw)
     }
 }
 
-int func_read(const char *pwstore_data_dir, const struct passwd *pw, int argc, char *const *argv)
+static int func_read(const char *pwstore_data_dir, const struct passwd *pw, int argc, char *const *argv)
 {
     replace_bad_char_from_string(argv[2], REPLACE_CHAR);
 
@@ -241,7 +241,7 @@ int func_read(const char *pwstore_data_dir, const struct passwd *pw, int argc, c
     return 0;
 }
 
-int func_del(const char *pwstore_data_dir, const struct passwd *pw, int argc, char *const *argv)
+static int func_del(const char *pwstore_data_dir, const struct passwd *pw, int argc, char *const *argv)
 {
     if (strlen(argv[2]) > 1)
     {
@@ -279,6 +279,102 @@ int func_del(const char *pwstore_data_dir, const struct passwd *pw, int argc, ch
     else
     {
         puts("-ERROR-010-");
+        return 1;
+    }
+}
+
+static int func_add(const char *pwstore_data_dir, const struct passwd *pw, int argc, char *const *argv,
+             const mode_t data_dir_mode, const mode_t data_file_mask, int create_user_data_dir,
+             const char *login_dir)
+{
+    if (strlen(argv[2]) > 1)
+    {
+        replace_bad_char_from_string(argv[2], REPLACE_CHAR);
+
+        char login_file[TEXT_BUFFER_LEN + 1]; // make buffer big enough
+        memset(login_file, 0, TEXT_BUFFER_LEN + 1);
+
+        if (argc == 4)
+        {
+            replace_bad_char_from_string(argv[3], REPLACE_CHAR);
+            snprintf(login_file, sizeof(login_file), "%s%s%s%s%s%s%s",
+                     pwstore_data_dir, pw->pw_name, "/", argv[2], "_", argv[3], ".txt");
+        }
+        else
+        {
+            snprintf(login_file, sizeof(login_file), "%s%s%s%s%s",
+                     pwstore_data_dir, pw->pw_name, "/", argv[2], ".txt");
+        }
+
+        const char *password1;
+        const char *password2;
+        char pass1[TEXT_BUFFER_LEN + 1]; // make buffer big enough
+        memset(pass1, 0, TEXT_BUFFER_LEN + 1);
+#ifdef LINUX
+        password1 = getpass("password: ");
+#else
+        password1 = getpassphrase("password: ");
+#endif
+        snprintf(pass1, sizeof(pass1), "%s", password1);
+#ifdef LINUX
+        password2 = getpass("   again: ");
+#else
+        password2 = getpassphrase("   again: ");
+#endif
+
+        if (strcmp(pass1, password2) != 0)
+        {
+            // passwords do not match
+            puts("-ERROR-004-");
+            return 1;
+        }
+
+        const mode_t oldMask = umask((mode_t) 0);
+        const mode_t newMask = data_file_mask;
+        umask(newMask);
+
+        if (create_user_data_dir == 1)
+        {
+            const int ret = mkdir(login_dir, data_dir_mode);
+            if (ret != 0)
+            {
+                puts("-ERROR-002-");
+                umask(oldMask);
+                return 1;
+            }
+            else
+            {
+                log_msg("MKDIR", "User created directory ", login_dir, pw->pw_name);
+            }
+        }
+
+        FILE *file = NULL;
+
+        if ((file = fopen(login_file, "wb")) == NULL)
+        {
+            puts("-ERROR-006-");
+            umask(oldMask);
+            return 1;
+        }
+        else
+        {
+            fprintf(file, "%s", password2);
+            log_msg2("ADD", "User added password for ", argv[2], argv[3], pw->pw_name);
+            umask(oldMask);
+            const int ret = fclose(file);
+            if (ret != 0)
+            {
+                puts("-ERROR-005-");
+                return 1;
+            }
+        }
+
+        umask(oldMask);
+        return 0;
+    }
+    else
+    {
+        puts("-ERROR-003-");
         return 1;
     }
 }
@@ -346,96 +442,9 @@ int main(int argc, char **argv)
         }
         else if (strcmp("add", argv[1]) == 0)
         {
-            if (strlen(argv[2]) > 1)
-            {
-                replace_bad_char_from_string(argv[2], REPLACE_CHAR);
-
-                char login_file[TEXT_BUFFER_LEN + 1]; // make buffer big enough
-                memset(login_file, 0, TEXT_BUFFER_LEN + 1);
-
-                if (argc == 4)
-                {
-                    replace_bad_char_from_string(argv[3], REPLACE_CHAR);
-                    snprintf(login_file, sizeof(login_file), "%s%s%s%s%s%s%s",
-                             pwstore_data_dir, pw->pw_name, "/", argv[2], "_", argv[3], ".txt");
-                }
-                else
-                {
-                    snprintf(login_file, sizeof(login_file), "%s%s%s%s%s",
-                             pwstore_data_dir, pw->pw_name, "/", argv[2], ".txt");
-                }
-
-                const char *password1;
-                const char *password2;
-                char pass1[TEXT_BUFFER_LEN + 1]; // make buffer big enough
-                memset(pass1, 0, TEXT_BUFFER_LEN + 1);
-#ifdef LINUX
-                password1 = getpass("password: ");
-#else
-                password1 = getpassphrase("password: ");
-#endif
-                snprintf(pass1, sizeof(pass1), "%s", password1);
-#ifdef LINUX
-                password2 = getpass("   again: ");
-#else
-                password2 = getpassphrase("   again: ");
-#endif
-
-                if (strcmp(pass1, password2) != 0)
-                {
-                    // passwords do not match
-                    puts("-ERROR-004-");
-                    return 1;
-                }
-
-                const mode_t oldMask = umask((mode_t) 0);
-                const mode_t newMask = data_file_mask;
-                umask(newMask);
-
-                if (create_user_data_dir == 1)
-                {
-                    const int ret = mkdir(login_dir, data_dir_mode);
-                    if (ret != 0)
-                    {
-                        puts("-ERROR-002-");
-                        umask(oldMask);
-                        return 1;
-                    }
-                    else
-                    {
-                        log_msg("MKDIR", "User created directory ", login_dir, pw->pw_name);
-                    }
-                }
-
-                FILE *file = NULL;
-
-                if ((file = fopen(login_file, "wb")) == NULL)
-                {
-                    puts("-ERROR-006-");
-                    umask(oldMask);
-                    return 1;
-                }
-                else
-                {
-                    fprintf(file, "%s", password2);
-                    log_msg2("ADD", "User added password for ", argv[2], argv[3], pw->pw_name);
-                    umask(oldMask);
-                    const int ret = fclose(file);
-                    if (ret != 0)
-                    {
-                        puts("-ERROR-005-");
-                        return 1;
-                    }
-                }
-
-                umask(oldMask);
-                return 0;
-            }
-            else
-            {
-                puts("-ERROR-003-");
-                return 1;
-            }
+            return func_add(pwstore_data_dir, pw, argc, argv, data_dir_mode, data_file_mask,
+                            create_user_data_dir,
+                            login_dir);
         }
         else if ((strcmp("del", argv[1]) == 0) || (strcmp("revoke", argv[1]) == 0))
         {
