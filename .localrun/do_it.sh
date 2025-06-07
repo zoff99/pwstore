@@ -39,6 +39,8 @@ cd $_HOME_
             add_flag -fsanitize=address
             add_flag -fstack-protector-all
             add_flag --param=ssp-buffer-size=1
+            add_flag -D_FORTIFY_SOURCE=2
+            add_flag -Wno-unknown-pragmas
 
-            clang-10 $C_FLAGS -g -D LINUX ../pwstore.c -o ../pwstore
+            clang-14 $C_FLAGS -g -D LINUX ../pwstore.c -o ../pwstore
 

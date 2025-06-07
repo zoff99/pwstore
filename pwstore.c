@@ -3,14 +3,14 @@
   Name        : pwstore.c
   Author      : Zoff <zoff@zoff.cc>
   Version     :
-  Copyright   : (C) 2014 - 2023 Zoff <zoff@zoff.cc>
+  Copyright   : (C) 2014 - 2025 Zoff <zoff@zoff.cc>
   Description : simple password mananger for unix scripts
   ============================================================================
   */
 
 /**
  * pwstore
- * Copyright (C) 2014 - 2023 Zoff <zoff@zoff.cc>
+ * Copyright (C) 2014 - 2025 Zoff <zoff@zoff.cc>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@
        -Wvla \
        -Werror=div-by-zero \
        -fno-omit-frame-pointer \
+       -D_FORTIFY_SOURCE=2 \
        -fstack-protector-all --param=ssp-buffer-size=1 \
        -D LINUX pwstore.c -o pwstore
 
@@ -41,6 +42,7 @@
        -Wvla \
        -Werror=div-by-zero \
        -fno-omit-frame-pointer \
+       -D_FORTIFY_SOURCE=2 \
        -fstack-protector-all --param=ssp-buffer-size=1 \
        -D LINUX pwstore.c -o pwstore
 
@@ -62,7 +64,7 @@
 #pragma clang diagnostic ignored "-Wdeclaration-after-statement"
 
 #define PWSTORE_DATA_DIR "/opt/pwstore/conf/"       // hardcoded location for now, TODO: make better somehow
-#define VERSION "v0.99.11"                          // version
+#define VERSION "v0.99.12"                          // version
 
 #define TEXT_BUFFER_LEN 8192
 #define REPLACE_CHAR (char)(95) // "_"

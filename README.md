@@ -7,7 +7,8 @@ tested on Solaris and Linux
 
 ## compile on Linux
 ```
-gcc -O3 pwstore.c -D LINUX -o pwstore
+gcc -O3 -D_FORTIFY_SOURCE=2 -fstack-protector-all \
+    --param=ssp-buffer-size=1 pwstore.c -D LINUX -o pwstore
 ```
 
 ## usage

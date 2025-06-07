@@ -27,6 +27,7 @@ jobs:
           clang -O3 -g \
           -Wall -Wextra -pedantic \
           -Wno-unknown-pragmas \
+          -D_FORTIFY_SOURCE=2 \
           -Wvla -Werror=div-by-zero -fno-omit-frame-pointer -fstack-protector-all --param=ssp-buffer-size=1 \
           -fno-omit-frame-pointer -fsanitize=address \
           -D LINUX \
