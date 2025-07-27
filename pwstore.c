@@ -66,7 +66,7 @@
 #define PWSTORE_DATA_DIR "/opt/pwstore/conf/"       // hardcoded location for now, TODO: make better somehow
 #define VERSION "v0.99.12"                          // version
 
-#define TEXT_BUFFER_LEN 8192
+#define TEXT_BUFFER_LEN (8192)
 #define REPLACE_CHAR (char)(95) // "_"
 
 static void usage(char *s)
