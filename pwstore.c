@@ -127,8 +127,8 @@ static void replace_bad_char_from_string(char *str, const char replace_with)
 {
     // replace those: '\ / : * ? " < > | .'
     char bad_chars[] = "\\./:*?<>|\"";
-    int i;
-    int j;
+    int i = 0;
+    int j = 0;
 
     if ((str) && (strlen(str) > 0))
     {
