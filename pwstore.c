@@ -135,10 +135,12 @@ static void replace_bad_char_from_string(char *str, const char replace_with)
         for (i = 0; (int)i < (int)strlen(str) ; i++)
         {
             for (j = 0; (int)j < (int)strlen(bad_chars); j++)
+            {
                 if (str[i] == bad_chars[j])
                 {
                     str[i] = replace_with;
                 }
+            }
         }
     }
 }
