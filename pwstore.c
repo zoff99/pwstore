@@ -77,6 +77,23 @@ static void usage(char *s)
     printf("         %s    add login [login2] - store password for login\n", s);
     printf("         %s revoke login [login2] - remove password for login\n", s);
     printf("         %s    del login [login2] - remove password for login\n", s);
+    printf("\n");
+    printf("Errors :\n");
+    printf("\n");
+    printf("-ERROR-001- Unix user does not exist or is an empty value\n");
+    printf("-ERROR-002- Error creating directory for user password files\n");
+    printf("-ERROR-003- \"login\" parameter must be at least 2 characters long on adding password\n");
+    printf("-ERROR-004- Entered passwords do not match\n");
+    printf("-ERROR-005- Error closing password file\n");
+    printf("-ERROR-006- Error opening or creating password file\n");
+    printf("-ERROR-007- Error opening password file\n");
+    printf("-WARNG-008- This will not be printed, just logged\n");
+    printf("-ERROR-009- Error reading from password file\n");
+    printf("-ERROR-010- \"login\" parameter must be at least 2 characters long on deleting password\n");
+    printf("-ERROR-011- Error deleting password file to revoke password\n");
+    printf("-ERROR-012- Unix user contains bad characters\n");
+    printf("-ERROR-013- Unix user is empty or has zero length\n");
+    printf("\n");
 }
 
 static void log_msg(const char *action, const char *msg, const char *msg2, const char *user)
@@ -145,6 +162,34 @@ static void replace_bad_char_from_string(char *str, const char replace_with)
     }
 }
 #pragma clang diagnostic pop
+
+static int check_bad_char_in_string(const char *str)
+{
+    // check for those: '\ / : * ? " < > | .'
+    char bad_chars[] = "\\./:*?<>|\"";
+    int i = 0;
+    int j = 0;
+
+    if ((str) && (strlen(str) > 0))
+    {
+        for (i = 0; (int)i < (int)strlen(str) ; i++)
+        {
+            for (j = 0; (int)j < (int)strlen(bad_chars); j++)
+            {
+                if (str[i] == bad_chars[j])
+                {
+                    return -1;
+                }
+            }
+        }
+    }
+    else
+    {
+        return -2;
+    }
+
+    return 0;
+}
 
 static void func_list(const char *pwstore_data_dir, const struct passwd *pw)
 {
@@ -236,8 +281,8 @@ static int func_read(const char *pwstore_data_dir, const struct passwd *pw, int 
         if (ret != 0)
         {
             // do not print this error, in case the password did print to stdout OK
-            // puts("-WARNING-008-");
-            log_msg2("READ", "-WARNING-008-: User trying to read password for ", argv[2], argv[3], pw->pw_name);
+            // puts("-WARNG-008-");
+            log_msg2("READ", "-WARNG-008-: User trying to read password for ", argv[2], argv[3], pw->pw_name);
             return 1;
         }
     }
@@ -407,6 +452,36 @@ int main(int argc, char **argv)
 
     if (pw)
     {
+        /*
+            adduser: To avoid problems, the username should consist only of
+                        letters, digits, underscores, periods, at signs and dashes, and
+                        not start with a dash (as defined by IEEE Std 1003.1-2001). For
+                        compatibility with Samba machine accounts, $ is also supported
+                        at the end of the username.  (Use the `--allow-all-names' option
+                        to bypass this restriction.)
+        */
+
+        /*
+        * pw->pw_name may contain special characters
+        * we need to check for them and return an error
+        */
+        int is_bad_username = check_bad_char_in_string(pw->pw_name);
+        if (is_bad_username != 0)
+        {
+            if (is_bad_username == -1)
+            {
+                puts("-ERROR-012-");
+                log_msg2("CHKUSR", "-ERROR-012-: Username contains bad characters ", argv[2], argv[3], pw->pw_name);
+                return 1;
+            }
+            else
+            {
+                puts("-ERROR-013-");
+                log_msg2("CHKUSR", "-ERROR-013-: Username is empty or has zero length ", argv[2], argv[3], "*empty*");
+                return 1;
+            }
+        }
+
         snprintf(login_dir, sizeof(login_dir), "%s%s", pwstore_data_dir, pw->pw_name);
         struct stat s;
         const int err = stat(login_dir, &s);
